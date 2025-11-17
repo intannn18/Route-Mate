@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROUte MATE - Smart Social Delivery Route</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #67B7F7;
+            --accent-color: #5DADE2;
+            --dark-bg: #1a1a2e;
+            --light-bg: #f8f9fa;
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-bottom: 80px;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .app-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.5s ease;
+        }
+
+        .dark-mode .app-header {
+            background: rgba(26, 26, 46, 0.95);
+            color: var(--text-light);
+        }
+
+        .app-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .dark-mode .app-header h1 {
+            color: var(--secondary-color);
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .dark-mode .content-card {
+            background: rgba(26, 26, 46, 0.95);
+            color: var(--text-light);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 10px 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .dark-mode .bottom-nav {
+            background: rgba(26, 26, 46, 0.98);
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6c757d;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            transform: translateY(-5px);
+        }
+
+        .nav-item i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .nav-item span {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 12px;
+            padding: 12px 25px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+        }
+
+        /* Task Card */
+        .task-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            cursor: move;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .dark-mode .task-card {
+            background: #2c3e50;
+            color: var(--text-light);
+        }
+
+        .task-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-card.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .priority-urgent {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .priority-normal {
+            background: #ffd93d;
+            color: #333;
+        }
+
+        .priority-low {
+            background: #95e1d3;
+            color: #333;
+        }
+
+        /* Map Container */
+        .map-container {
+            height: 400px;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-placeholder {
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        /* Stats Card */
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        /* Form Elements */
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Page Visibility */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Team Member Card */
+        .team-member {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .team-member {
+            background: #2c3e50;
+        }
+
+        .team-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            margin-right: 15px;
+        }
+
+        /* Modal Custom */
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .content-card {
+                padding: 15px;
+            }
+        }
+
+        /* Tooltip */
+        .tooltip-custom {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-custom .tooltiptext {
+            visibility: hidden;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip-custom:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1><i class="fas fa-route"></i> ROUte MATE</h1>
+                    <small class="text-muted">Smart Social Delivery Route</small>
+                </div>
+                <div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Page -->
+        <div id="homePage" class="page active">
+            <div class="content-card">
+                <h3 class="mb-4"><i class="fas fa-chart-line"></i> Ringkasan Hari Ini</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="stat-card pulse-animation">
+                            <h3 id="totalTasks">0</h3>
+                            <p><i class="fas fa-tasks"></i> Total Tugas</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                            <h3 id="completedTasks">0</h3>
+                            <p><i class="fas fa-check-circle"></i> Selesai</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                            <h3 id="fuelEstimate">0L</h3>
+                            <p><i class="fas fa-gas-pump"></i> Estimasi Bensin</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h4 class="mb-3"><i class="fas fa-clock"></i> Tugas Urgent Hari Ini</h4>
+                <div id="urgentTasksList"></div>
+            </div>
+
+            <div class="content-card">
+                <h4 class="mb-3"><i class="fas fa-history"></i> Riwayat Terakhir</h4>
+                <div id="recentHistory"></div>
+            </div>
+        </div>
+
+        <!-- Map Page -->
+        <div id="mapPage" class="page">
+            <div class="content-card">
+                <h3 class="mb-3"><i class="fas fa-map-marked-alt"></i> Peta Rute</h3>
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <i class="fas fa-map fa-5x mb-3"></i>
+                        <p>Peta interaktif akan ditampilkan di sini</p>
+                        <small>Tambahkan lokasi dari menu Task</small>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>Daftar Lokasi Rute</h5>
+                        <button class="btn btn-primary-custom btn-sm" onclick="optimizeRoute()">
+                            <i class="fas fa-magic"></i> Optimalkan Rute
+                        </button>
+                    </div>
+                    <div id="routeLocationsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Page -->
+        <div id="taskPage" class="page">
+            <div class="content-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3><i class="fas fa-clipboard-list"></i> Daftar Tugas</h3>
+                    <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                        <i class="fas fa-plus"></i> Tambah Tugas
+                    </button>
+                </div>
+
+                <div class="mb-3">
+                    <select class="form-select" id="filterPriority">
+                        <option value="all">Semua Prioritas</option>
+                        <option value="urgent">Urgent</option>
+                        <option value="normal">Normal</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+
+                <div id="tasksList"></div>
+            </div>
+        </div>
+
+        <!-- Team Page -->
+        <div id="teamPage" class="page">
+            <div class="content-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3><i class="fas fa-users"></i> Tim Saya</h3>
+                    <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addTeamModal">
+                        <i class="fas fa-user-plus"></i> Tambah Anggota
+                    </button>
+                </div>
+                <div id="teamMembersList"></div>
+            </div>
+
+            <div class="content-card">
+                <h4 class="mb-3"><i class="fas fa-share-alt"></i> Bagikan Rute</h4>
+                <p class="text-muted">Bagikan rute Anda dengan anggota tim</p>
+                <button class="btn btn-primary-custom w-100" onclick="shareRoute()">
+                    <i class="fas fa-paper-plane"></i> Kirim Rute ke Tim
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profilePage" class="page">
+            <div class="content-card">
+                <div class="text-center mb-4">
+                    <div class="team-avatar mx-auto" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h4 class="mt-3" id="userName">Pengguna</h4>
+                    <p class="text-muted" id="userRole">Sales Lapangan</p>
+                </div>
+
+                <h5 class="mb-3"><i class="fas fa-cog"></i> Pengaturan</h5>
+                
+                <div class="mb-3">
+                    <label class="form-label">Mode Kendaraan</label>
+                    <select class="form-select" id="vehicleMode">
+                        <option value="motorcycle">Motor</option>
+                        <option value="car">Mobil</option>
+                        <option value="walk">Jalan Kaki</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Radius Notifikasi (meter)</label>
+                    <input type="number" class="form-control" id="notificationRadius" value="200">
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="offlineMode">
+                    <label class="form-check-label" for="offlineMode">
+                        Mode Offline
+                    </label>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="autoOptimize" checked>
+                    <label class="form-check-label" for="autoOptimize">
+                        Optimasi Rute Otomatis
+                    </label>
+                </div>
+
+                <button class="btn btn-danger w-100 mt-4" onclick="clearAllData()">
+                    <i class="fas fa-trash"></i> Hapus Semua Data
+                </button>
+            </div>
+
+            <div class="content-card">
+                <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang Aplikasi</h5>
+                <p><strong>ROUte MATE</strong> v1.0</p>
+                <p class="text-muted">Smart Social Delivery Route - Membantu Anda merencanakan rute perjalanan paling efisien.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-items">
+            <a class="nav-item active" onclick="showPage('homePage')">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a class="nav-item" onclick="showPage('mapPage')">
+                <i class="fas fa-map"></i>
+                <span>Map</span>
+            </a>
+            <a class="nav-item" onclick="showPage('taskPage')">
+                <i class="fas fa-tasks"></i>
+                <span>Task</span>
+            </a>
+            <a class="nav-item" onclick="showPage('teamPage')">
+                <i class="fas fa-users"></i>
+                <span>Team</span>
+            </a>
+            <a class="nav-item" onclick="showPage('profilePage')">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div class="modal fade" id="addTaskModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-plus-circle"></i> Tambah Tugas Baru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTaskForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nama Tugas</label>
+                            <input type="text" class="form-control" id="taskName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Lokasi</label>
+                            <input type="text" class="form-control" id="taskLocation" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Prioritas</label>
+                            <select class="form-select" id="taskPriority">
+                                <option value="urgent">Urgent</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="taskDescription" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary-custom" onclick="addTask()">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Team Modal -->
+    <div class="modal fade" id="addTeamModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-plus"></i> Tambah Anggota Tim</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTeamForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nama Anggota</label>
+                            <input type="text" class="form-control" id="memberName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <input type="text" class="form-control" id="memberRole" placeholder="Kurir, Sales, dll">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary-custom" onclick="addTeamMember()">Tambah</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // LocalStorage Keys
+        const STORAGE_KEYS = {
+            TASKS: 'routemate_tasks',
+            TEAM: 'routemate_team',
+            HISTORY: 'routemate_history',
+            SETTINGS: 'routemate_settings'
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            loadTasks();
+            loadTeam();
+            loadHistory();
+            updateStats();
+            setupEventListeners();
+        });
+
+        function initializeApp() {
+            // Initialize default data if not exists
+            if (!localStorage.getItem(STORAGE_KEYS.TASKS)) {
+                localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify([]));
+            }
+            if (!localStorage.getItem(STORAGE_KEYS.TEAM)) {
+                localStorage.setItem(STORAGE_KEYS.TEAM, JSON.stringify([]));
+            }
+            if (!localStorage.getItem(STORAGE_KEYS.HISTORY)) {
+                localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify([]));
+            }
+        }
+
+        function setupEventListeners() {
+            // Dark Mode Toggle
+            document.getElementById('darkModeToggle').addEventListener('change', function() {
+                document.body.classList.toggle('dark-mode');
+            });
+
+            // Filter Priority
+            document.getElementById('filterPriority').addEventListener('change', function() {
+                loadTasks();
+            });
+        }
+
+        // Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Remove active from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Add active to clicked nav item
+            event.currentTarget.classList.add('active');
+
+            // Reload data based on page
+            if (pageId === 'taskPage') loadTasks();
+            if (pageId === 'teamPage') loadTeam();
+            if (pageId === 'mapPage') loadRouteLocations();
+            if (pageId === 'homePage') {
+                updateStats();
+                loadUrgentTasks();
+                loadHistory();
+            }
+        }
+
+        // Task Management
+        function addTask() {
+            const name = document.getElementById('taskName').value;
+            const location = document.getElementById('taskLocation').value;
+            const priority = document.getElementById('taskPriority').value;
+            const description = document.getElementById('taskDescription').value;
+
+            if (!name || !location) {
+                alert('Nama tugas dan lokasi harus diisi!');
+                return;
+            }
+
+            const tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS));
+            const newTask = {
+                id: Date.now(),
+                name: name,
+                location: location,
+                priority: priority,
+                description: description,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+
+            tasks.push(newTask);
+            localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks));
+
+            // Reset form
+            document.getElementById('addTaskForm').reset();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addTaskModal'));
+            modal.hide();
+
+            // Reload tasks
+            loadTasks();
+            updateStats();
+
+            // Show success animation
+            showNotification('Tugas berhasil ditambahkan!', 'success');
+        }
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS));
+            const filter = document.getElementById('filterPriority').value;
+            const tasksList = document.getElementById('tasksList');
+
+            let filteredTasks = tasks;
+            if (filter !== 'all') {
+                filteredTasks = tasks.filter(task => task.priority === filter);
+            }
+
+            if (filteredTasks.length === 0) {
+                tasksList.innerHTML = '<p class="text-center text-muted">Belum ada tugas</p>';
+                return;
+            }
+
+            tasksList.innerHTML = filteredTasks.map(task => `
+                <div class="task-card ${task.completed ? 'completed' : ''}" draggable="true">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="mb-2">
+                                <span class="priority-badge priority-${task.priority}">${task.priority.toUpperCase()}</span>
+                            </div>
+                            <h5 class="mb-1">${task.name}</h5>
+                            <p class="mb-1 text-muted"><i class="fas fa-map-marker-alt"></i> ${task.location}</p>
+                            ${task.description ? `<p class="mb-0 small">${task.description}</p>` : ''}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-success" onclick="toggleTaskComplete(${task.id})">
+                                <i class="fas fa-${task.completed ? 'undo' : 'check'}"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteTask(${task.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add drag and drop functionality
+            addDragAndDrop();
+        }
+
+        function toggleTaskComplete(taskId) {
+            const tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS));
+            const taskIndex = tasks.findIndex(t => t.id === taskId);
+            
+            if (taskIndex !== -1) {
+                tasks[taskIndex].completed = !tasks[taskIndex].completed;
+                
+                // Add to history if completed
+                if (tasks[taskIndex].completed) {
+                    addToHistory(tasks[taskIndex]);
+                }
+                
+                localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks));
+                loadTasks();
+                updateStats();
+                showNotification(tasks[taskIndex].completed ? 'Tugas selesai!' : 'Tugas dibuka kembali', 'info');
+            }
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('Hapus tugas ini?')) {
+                let tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS));
+                tasks = tasks.filter(t => t.id !== taskId);
+                localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks));
+                loadTasks();
+                updateStats();
+                showNotification('Tugas dihapus', 'warning');
+            }
+        }
+
+        function addDragAndDrop() {
+            const taskCards = document.querySelectorAll('.task-card');
+            let draggedElement = null;
+
+            taskCards.forEach(card => {
+                card.addEventListener('dragstart', function(e) {
+                    draggedElement = this;
+                    this.style.opacity = '0.5';
+                });
+
+                card.addEventListener('dragend', function(e) {
+                    this.style.opacity = '1';
+                });
+
+                card.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                });
+
+                card.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    if (draggedElement !== this) {
+                        const allCards = Array.from(taskCards);
+                        const draggedIndex = allCards.indexOf(draggedElement);
+                        const targetIndex = allCards.indexOf(this);
+
+                        if (draggedIndex < targetIndex) {
+                            this.parentNode.insertBefore(draggedElement, this.nextSibling);
+                        } else {
+                            this.parentNode.insertBefore(draggedElement, this);
+                        }
+                    }
+                });
+            });
+        }
+
+        // Team Management
+        function addTeamMember() {
+            const name = document.getElementById('memberName').value;
+            const role = document.getElementById('memberRole').value;
+
+            if (!name) {
+                alert('Nama anggota harus diisi!');
+                return;
+            }
+
+            const team = JSON.parse(localStorage.getItem(STORAGE_KEYS.TEAM));
+            const newMember = {
+                id: Date.now(),
+                name: name,
+                role: role || 'Anggota Tim',
+                joinedAt: new Date().toISOString()
+            };
+
+            team.push(newMember);
+            localStorage.setItem(STORAGE_KEYS.TEAM, JSON.stringify(team));
+
+            document.getElementById('addTeamForm').reset();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addTeamModal'));
+            modal.hide();
+
+            loadTeam();
+            showNotification('Anggota tim berhasil ditambahkan!', 'success');
+        }
+
+        function loadTeam() {
+            const team = JSON.parse(localStorage.getItem(STORAGE_KEYS.TEAM));
+            const teamList = document.getElementById('teamMembersList');
+
+            if (team.length === 0) {
+                teamList.innerHTML = '<p class="text-center text-muted">Belum ada anggota tim</p>';
+                return;
+            }
+
+            teamList.innerHTML = team.map(member => `
+                <div class="team-member">
+                    <div class="team-avatar">
+                        ${member.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">${member.name}</h6>
+                        <small class="text-muted">${member.role}</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger" onclick="removeTeamMember(${member.id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeTeamMember(memberId) {
+            if (confirm('Hapus anggota tim ini?')) {
+                let team = JSON.parse(localStorage.getItem(STORAGE_KEYS.TEAM));
+                team = team.filter(m => m.id !== memberId);
+                localStorage.setItem(STORAGE_KEYS.TEAM, JSON.stringify(team));
+                loadTeam();
+                showNotification('Anggota tim dihapus', 'warning');
+            }
+        }
+
+        function shareRoute() {
+            const tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS));
+            const activeTasks = tasks.filter(t => !t.completed);
+
+            if (activeTasks.length === 0) {
+                alert('Tidak ada tugas aktif untuk dibagikan');
+                return;
+            }
+
+            const routeText = activeTasks.map((task, index) => 
+                `${index + 1}. ${task.name} - ${task.location} (${task.priority})`
+            ).join('\n');
+
+            const shareText = `🚗 ROUte MATE - Rute Hari Ini\n\n${routeText}\n\nDibuat dengan ROUte MATE`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'ROUte MATE - Rute Saya',
+                    text: shareText
+                }).then(() => {
+                    showNotification('Rute berhasil dibagikan!', 'success');
+                }).catch(() => {
+                    copyToClipboard(shareText);
+                });
+            } else {
+                copyToClipboard(shareText);
+            }
+        }
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showNotification('Rute disalin ke clipboard!', 'success');
+        }
+
+        // History Management
+        function addToHistory(task) {
+            const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY));
+            const historyEntry = {
+                id: Date.now(),
+                taskName: task.name,
+                location: task.location,
+                completedAt: new Date().toISOString()
+            };
+
+            history.unshift(historyEntry);
+            
+            // Keep only last 10 entries
+            if (history.length > 10) {
+                history.pop();
+            }
+
+            localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history));
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY));
+            const historyList = document.getElementById('recentHistory');
+
+            if (history.length === 0) {
+                historyList.innerHTML = '<p class="text-muted">Belum ada riwayat</p>';
+                return;
+            }
+
+            historyList.innerHTML = history.slice(0, 5).map(entry => {
+                const date = new Date(entry.completedAt);
+                return `
+                    <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                        <div>
+                            <strong>${entry.taskName}</strong>
+                            <br>
+                            <small class="text-muted"><i class="fas fa-map-marker-alt"></i> ${entry.location}</small>
+                        </div>
+                        <small class="text-muted">${formatDate(date)}</small>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadUrgentTasks() {
+            const tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS));
+            const urgentTasks = tasks.filter(t => t.priority === 'urgent' && !t.completed);
+            const urgentList = document.getElementById('urgentTasksList');
+
+            if (urgentTasks.length === 0) {
+                urgentList.innerHTML = '<p class="text-muted">Tidak ada tugas urgent</p>';
+                return;
+            }
+
+            urgentList.innerHTML = urgentTasks.map(task => `
+                <div class="task-card">
+                    <span class="priority-badge priority-urgent">URGENT</span>
+                    <h6 class="mt-2 mb-1">${task.name}</h6>
+                    <small class="text-muted"><i class="fas fa-map-marker-alt"></i> ${task.location}</small>
+                </div>
+            `).join('');
+        }
+
+        // Route Optimization
+        function loadRouteLocations() {
+            const tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS));
+            const activeTasks = tasks.filter(t => !t.completed);
+            const routeList = document.getElementById('routeLocationsList');
+
+            if (activeTasks.length === 0) {
+                routeList.innerHTML = '<p class="text-muted">Tidak ada lokasi dalam rute</p>';
+                return;
+            }
+
+            routeList.innerHTML = activeTasks.map((task, index) => `
+                <div class="task-card">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3" style="font-size: 1.5rem; color: var(--primary-color); font-weight: 700;">
+                            ${index + 1}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${task.name}</h6>
+                            <small class="text-muted"><i class="fas fa-map-marker-alt"></i> ${task.location}</small>
+                        </div>
+                        <span class="priority-badge priority-${task.priority}">${task.priority}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function optimizeRoute() {
+            const tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS));
+            let activeTasks = tasks.filter(t => !t.completed);
+
+            // Simple optimization: Sort by priority (urgent > normal > low)
+            const priorityOrder = { urgent: 1, normal: 2, low: 3 };
+            activeTasks.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+            // Update task order in storage
+            const completedTasks = tasks.filter(t => t.completed);
+            const optimizedTasks = [...activeTasks, ...completedTasks];
+            localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(optimizedTasks));
+
+            loadRouteLocations();
+            showNotification('Rute telah dioptimalkan berdasarkan prioritas!', 'success');
+        }
+
+        // Statistics
+        function updateStats() {
+            const tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS));
+            const totalTasks = tasks.length;
+            const completedTasks = tasks.filter(t => t.completed).length;
+            const activeTasks = tasks.filter(t => !t.completed).length;
+
+            // Simple fuel estimation (5km per location, 1L per 40km)
+            const fuelEstimate = (activeTasks * 5 / 40).toFixed(1);
+
+            document.getElementById('totalTasks').textContent = totalTasks;
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('fuelEstimate').textContent = fuelEstimate + 'L';
+        }
+
+        // Utility Functions
+        function formatDate(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 60) return `${minutes} menit lalu`;
+            if (hours < 24) return `${hours} jam lalu`;
+            return `${days} hari lalu`;
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show`;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '9999';
+            notification.style.minWidth = '250px';
+            notification.style.animation = 'slideDown 0.5s ease';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function clearAllData() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan!')) {
+                localStorage.removeItem(STORAGE_KEYS.TASKS);
+                localStorage.removeItem(STORAGE_KEYS.TEAM);
+                localStorage.removeItem(STORAGE_KEYS.HISTORY);
+                
+                initializeApp();
+                loadTasks();
+                loadTeam();
+                loadHistory();
+                updateStats();
+                
+                showNotification('Semua data telah dihapus', 'info');
+            }
+        }
+
+        // Simulated GPS notification
+        setInterval(() => {
+            const tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS));
+            const activeTasks = tasks.filter(t => !t.completed);
+            
+            if (activeTasks.length > 0 && Math.random() > 0.95) {
+                const randomTask = activeTasks[Math.floor(Math.random() * activeTasks.length)];
+                showNotification(`📍 Anda mendekati: ${randomTask.location}`, 'info');
+            }
+        }, 30000); // Check every 30 seconds
+    </script>
+</body>
+</html>
